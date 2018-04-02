@@ -55,10 +55,27 @@ setxkbmap -layout us -option ctrl:nocaps
 # PATH export
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:$HOME/.local/lib/python2.7/site-packages:$HOME/.local/bin:$HOME/.bin"
 
-export GOROOT=/usr/local/go
-export PATH=$PATH:$GOROOT/bin
-export GOPATH=$HOME/go 
+export GOPATH=$HOME/go
+export GOBIN=$GOPATH/bin
+
+export PATH=$PATH:$GOBIN
 export PATH=$PATH:~/.bin:$GOPATH/bin
+
+if command -v most > /dev/null 2>&1; then
+    export PAGER="most"
+else
+    man() {
+    env \
+        LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+        LESS_TERMCAP_md=$(printf "\e[1;31m") \
+        LESS_TERMCAP_me=$(printf "\e[0m") \
+        LESS_TERMCAP_se=$(printf "\e[0m") \
+        LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+        LESS_TERMCAP_ue=$(printf "\e[0m") \
+        LESS_TERMCAP_us=$(printf "\e[1;32m") \
+            man "$@"
+    }
+fi
 
 source $ZSH/oh-my-zsh.sh
 
@@ -79,8 +96,7 @@ source $ZSH/oh-my-zsh.sh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
 
 # Neovim color support
-source "$HOME/.config/nvim/bundle//repos/github.com/morhetz/gruvbox/gruvbox_256palette.sh"
-
+#export TERM=xterm-256color
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -94,65 +110,26 @@ alias vimrc="nvim ~/.vimrc"
 # Hosts
 alias hosts="sudo nvim /etc/hosts"
 
-# Server
-alias scron01='ssh lengow@95.131.141.171'
-alias lengow_db='psql -h 10.100.1.240 -d lengow -U lengow'
 
 # Dev
-alias work="cd ~/workspace/pymarketplace-2.7 && workon pyMarket; unset DJANGO_SETTINGS_MODULE; find . -name '*.pyc' -exec rm {} \\;"
-alias work3="cd ~/workspace/pymarketplaces && workon pyMarket3.4; export DJANGO_SETTINGS_MODULE=pyMarketPlaces.settings.dev;find . -name '*.pyc' -exec rm {} \\;" 
-alias v3="cd ~/workspace/v3 && workon v3; export DJANGO_SETTINGS_MODULE=pyMarketPlaces.settings.local;find . -name '*.pyc' -exec rm -f {} \\;"
-alias sharing_cloud="cd ~/workspace/test_sharing_cloud && workon test_sharing_cloud; export DJANGO_SETTINGS_MODULE=test_sharing_cloud.settings.dev;find . -name '*.pyc' -exec rm -f {} \\;"
-alias api="cd ~/workspace/lengow_api; workon api;export DJANGO_SETTINGS_MODULE=lengow_api.settings.local;find . -name '*.pyc' -exec rm -f {} \\;"
-alias tf_core="cd ~/workspace/lengow_core; workon tf_core;export PYTHONPATH=$(pwd);find . -name '*.pyc' -exec rm -f {} \\;"
-alias lengow_ci="cd ~/workspace/lengow_ci; workon lengow_ci;find . -name '*.pyc' -exec rm -f {} \\;"
-alias solution="cd ~/workspace/svn;"
-alias cbs="rm -rf /tmp/ClientByServer; rsync -zqr --stats batch06:/space/home/lengow/apps/core/ClientByServer /tmp;sudo cp /tmp/ClientByServer/* /space/home/lengow/apps/core/ClientByServer/;sudo cp /tmp/ClientByServer/* /var/www/vhosts/lengow.com/ClientByServer;rm -rf /tmp/ClientByServer;echo 'done';"
-
 # Python
 alias checkpy2="python2.7 -m py_compile"
 alias checkpy3="python -m py_compile"
 
 # System
-alias update="sudo apt-get udpate"
-alias upgrade="sudo apt-get upgrade"
 alias gti="git"
-
-export BEEP=~/Téléchargements/OOT_Get_Rupee.wav
-alias beep="paplay $BEEP"
 
 # Tmux
 alias tmux='tmux -2'
 alias clean_swap='rm ~/.local/share/nvim/swap/*.swp'
 
-alias lengow_client='mycli -h95.131.141.166 -P3706 -umickael -paurelien -D lengow_client'
-alias lengow_tracking='mycli -h95.131.141.166 -P3706 -umickael -paurelien -D lengow_tracking'
-alias lengow_marketplaces='mycli -h95.131.141.166 -P3706 -umickael -paurelien -D lengow_marketplaces'
-alias lengow_thesaurus='mycli -h95.131.141.166 -P3706 -umickael -paurelien -D lengow_thesaurus'
-alias bdd-06='mycli -h95.131.141.166 -P3306 -umickael -paurelien -D lengow_flux'
 
 alias beego_db='pgcli postgres://heisenberg:lospolloshermanos@localhost:5432/beego'
-
-alias pg_pre_prod='pgcli postgres://lengow:0FRW!9KIKq@10.0.3.105:5432'
-alias pg_dev='pgcli postgres://lengow:lengow44@10.100.1.240:5432'
-alias pg_inte='pgcli postgres://lengow:lengow44@10.100.1.242:5432'
-alias pg_rec='pgcli postgres://lengow:0FRW!9KIKq@10.0.4.142:5432'
-alias pr_prod='pgcli postgres://lengow:0FRW!9KIKq@localhost:8000/lengow'
-alias tunnel_prod_rw='ssh -L 8000:172.24.100.17:5432 lbn-admin-tunnel -N'
-
-alias do-api-orders='docker run --rm -it --name api -v /home/sebastien/workspace/showflux:/usr/src/python/work/src -p 8052:8052 --net=host --privileged api-commandes'
-alias do-api-orders-restart='docker rm -f api; do-api-orders'
-
-alias settings_prod="export APP_SETTINGS_MODE='production'"
-alias settings_dev="export APP_SETTINGS_MODE='dev'"
-alias logistics_hosts="sudo awk -i inplace '{if ($1 ~ /^#127/ && $2 == \"logistics.lengow.com\") gsub(/#127/, \"127\"); else if ($1 ~ !/#/ && $1 ~ /127/ && $2 == \"logistics.lengow.com\") gsub(/127/, \"#127\"); print;}' /etc/hosts"
-alias middleware="cd ~/workspace/middleware; workon middleware;export MIDDLEWARE_SETTING_MODE=\"$HOME/workspace/middleware/api/settings/settings.py\";"
 
 alias aws_conf="nvim ~/.config/awesome/rc.lua"
 alias dual='xrandr --auto --output eDP-1 --mode 1920x1080 --left-of DP-1'
 
 alias nvimdiff='nvim -d'
-
 tnew() {
     tmux new-session -As `basename $PWD`
 }
@@ -162,12 +139,22 @@ gotest() {
 }
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-fpath=(~/.zsh/completion $fpath) 
+fpath=(~/.zsh/completion $fpath)
 autoload -Uz compinit && compinit -i
 
-SC_CLIENT_ID=531e00c61d52954581320843ff2fc19f
 
-source /etc/bash_completion.d/climate_completion
+# Enable Ctrl-x-e to edit command line
+autoload -U edit-command-line
+# Emacs style
+zle -N edit-command-line
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
+# Vi style:
+ #zle -N edit-command-line
+ #bindkey -M vicmd v edit-command-line
 
-# added by travis gem
-[ -f /home/sebastien/.travis/travis.sh ] && source /home/sebastien/.travis/travis.sh
+# Dual screen position
+#source ~/.screenlayout/dual.sh
+
+# Aws autocompleter
+source $(dirname $(which aws_completer))/aws_zsh_completer.sh
